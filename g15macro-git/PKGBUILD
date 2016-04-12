@@ -1,0 +1,38 @@
+# Maintainer: David Buchan <dabuchan@bluebucket.org>
+_pkgname=g15daemon
+pkgname=g15macro-git
+pkgver=7a9c50a
+pkgrel=1
+pkgdesc="A simple Macro recording/playback app for G15Daemon. From git so orange g15 keys work."
+arch=('i686' 'x86_64')
+url="http://sourceforge.net/projects/g15daemon/"
+license=('GPL')
+depends=('g15daemon' 'libxtst')
+makedepends=('git')
+conflicts=('g15macro')
+provides=('g15macro')
+options=(!libtool)
+source=(git+https://github.com/bluebucket/g15daemon.git)
+md5sums=('SKIP') #generate with 'makepkg -g'
+
+_gitroot=g15daemon
+
+pkgver() {
+  cd "$srcdir/$_pkgname"
+  git rev-parse --short HEAD
+}
+
+build() {
+  cd "$srcdir/$_pkgname/g15daemon-clients/g15macro"
+  
+  autoreconf -vis
+  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var
+  make
+}
+
+package() {
+  cd "$srcdir/$_pkgname/g15daemon-clients/g15macro"
+  make DESTDIR="$pkgdir/" install
+}
+
+# vim:set ts=2 sw=2 et:

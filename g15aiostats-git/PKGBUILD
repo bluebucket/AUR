@@ -1,0 +1,37 @@
+# Maintainer: David Buchan <dabuchan@bluebucket.org>
+_pkgname=g15aiostats
+pkgname=g15aiostats-git
+pkgver=b28785c
+pkgrel=1
+pkgdesc="A plugin for G15 keyboards that displays various system information including time and date, per-core CPU use, network transfer rates, disk transfer rates, filesystem usage, memory and swap usage, uptime, system load, and temperature/fan sensor data."
+arch=('i686' 'x86_64')
+url="https://code.google.com/archive/p/g15aiostats/"
+license=('GPL')
+depends=('g15daemon' 'libgtop' 'libg15render' 'boost' 'lm_sensors')
+makedepends=('git')
+conflicts=('g15aiostats')
+provides=('g15aiostats')
+options=(!libtool)
+source=(git+https://github.com/bluebucket/g15aiostats.git)
+md5sums=('SKIP') #generate with 'makepkg -g'
+
+_gitroot=g15aiostats
+
+pkgver() {
+  cd "$srcdir/$_pkgname"
+  git rev-parse --short HEAD
+}
+
+build() {
+  cd "$srcdir/$_pkgname"
+  
+  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var
+  make
+}
+
+package() {
+  cd "$srcdir/$_pkgname"
+  make DESTDIR="$pkgdir/" install
+}
+
+# vim:set ts=2 sw=2 et:
